@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Calculadora_JARV.MainPage"
+             BackgroundColor="#F7F9FC">
+
+    <Grid RowDefinitions="*, Auto" Padding="20">
+
+        <!-- Pantalla de la Calculadora -->
+        <VerticalStackLayout Grid.Row="0" VerticalOptions="End" HorizontalOptions="Fill" Spacing="5" Margin="0,0,0,20">
+            <Label x:Name="TxtHistorial"
+                   Text=""
+                   FontSize="22"
+                   TextColor="#5A6068"
+                   HorizontalTextAlignment="End" />
+            <Label x:Name="TxtPantalla"
+                   Text="0"
+                   FontSize="54"
+                   FontAttributes="Bold"
+                   TextColor="#191C20"
+                   HorizontalTextAlignment="End"
+                   LineBreakMode="HeadTruncation" />
+        </VerticalStackLayout>
+
+        <!-- Teclado de la Calculadora -->
+        <Grid Grid.Row="1"
+              RowDefinitions="*,*,*,*,*"
+              ColumnDefinitions="*,*,*,*"
+              RowSpacing="12"
+              ColumnSpacing="12">
+
+            <!-- Estilos Locales para Botones -->
+            <Grid.Resources>
+                <ResourceDictionary>
+                    <!-- Botones de Operadores Especiales -->
+                    <Style x:Key="BtnOperador" TargetType="Button">
+                        <Setter Property="BackgroundColor" Value="#DCE8FF" />
+                        <Setter Property="TextColor" Value="#001D35" />
+                        <Setter Property="FontSize" Value="24" />
+                        <Setter Property="CornerRadius" Value="40" />
+                        <Setter Property="HeightRequest" Value="75" />
+                    </Style>
+
+                    <!-- Botones de Números -->
+                    <Style x:Key="BtnNumero" TargetType="Button">
+                        <Setter Property="BackgroundColor" Value="#EDF2FA" />
+                        <Setter Property="TextColor" Value="#191C20" />
+                        <Setter Property="FontSize" Value="28" />
+                        <Setter Property="CornerRadius" Value="40" />
+                        <Setter Property="HeightRequest" Value="75" />
+                    </Style>
+
+                    <!-- Botón Igual -->
+                    <Style x:Key="BtnIgual" TargetType="Button">
+                        <Setter Property="BackgroundColor" Value="#485A96" />
+                        <Setter Property="TextColor" Value="White" />
+                        <Setter Property="FontSize" Value="32" />
+                        <Setter Property="CornerRadius" Value="40" />
+                        <Setter Property="HeightRequest" Value="75" />
+                    </Style>
+                </ResourceDictionary>
+            </Grid.Resources>
+
+            <!-- Fila 0 -->
+            <Button Grid.Row="0" Grid.Column="0" Text="AC" Style="{StaticResource BtnOperador}" Clicked="OnLimpiarClicked" />
+            <Button Grid.Row="0" Grid.Column="1" Text="( )" Style="{StaticResource BtnOperador}" Clicked="OnParentesisClicked" />
+            <Button Grid.Row="0" Grid.Column="2" Text="%" Style="{StaticResource BtnOperador}" Clicked="OnOperadorClicked" />
+            <Button Grid.Row="0" Grid.Column="3" Text="÷" Style="{StaticResource BtnOperador}" Clicked="OnOperadorClicked" />
+
+            <!-- Fila 1 -->
+            <Button Grid.Row="1" Grid.Column="0" Text="7" Style="{StaticResource BtnNumero}" Clicked="OnNumeroClicked" />
+            <Button Grid.Row="1" Grid.Column="1" Text="8" Style="{StaticResource BtnNumero}" Clicked="OnNumeroClicked" />
+            <Button Grid.Row="2" Grid.Column="2" Text="9" Style="{StaticResource BtnNumero}" Clicked="OnNumeroClicked" />
+            <Button Grid.Row="1" Grid.Column="3" Text="×" Style="{StaticResource BtnOperador}" Clicked="OnOperadorClicked" />
+
+            <!-- Fila 2 -->
+            <Button Grid.Row="2" Grid.Column="0" Text="4" Style="{StaticResource BtnNumero}" Clicked="OnNumeroClicked" />
+            <Button Grid.Row="2" Grid.Column="1" Text="5" Style="{StaticResource BtnNumero}" Clicked="OnNumeroClicked" />
+            <Button Grid.Row="1" Grid.Column="2" Text="9" Style="{StaticResource BtnNumero}" Clicked="OnNumeroClicked" />
+            <Button Grid.Row="2" Grid.Column="3" Text="-" Style="{StaticResource BtnOperador}" Clicked="OnOperadorClicked" />
+
+            <!-- Fila 3 -->
+            <Button Grid.Row="3" Grid.Column="0" Text="1" Style="{StaticResource BtnNumero}" Clicked="OnNumeroClicked" />
+            <Button Grid.Row="3" Grid.Column="1" Text="2" Style="{StaticResource BtnNumero}" Clicked="OnNumeroClicked" />
+            <Button Grid.Row="3" Grid.Column="2" Text="3" Style="{StaticResource BtnNumero}" Clicked="OnNumeroClicked" />
+            <Button Grid.Row="3" Grid.Column="3" Text="+" Style="{StaticResource BtnOperador}" Clicked="OnOperadorClicked" />
+
+            <!-- Fila 4 -->
+            <Button Grid.Row="4" Grid.Column="0" Text="0" Style="{StaticResource BtnNumero}" Clicked="OnNumeroClicked" />
+            <Button Grid.Row="4" Grid.Column="1" Text="." Style="{StaticResource BtnNumero}" Clicked="OnPuntoClicked" />
+            <Button Grid.Row="4" Grid.Column="2" Text="⌫" Style="{StaticResource BtnNumero}" Clicked="OnBorrarUltimoClicked" />
+            <Button Grid.Row="4" Grid.Column="3" Text="=" Style="{StaticResource BtnIgual}" Clicked="OnCalcularClicked" />
+
+        </Grid>
+    </Grid>
+</ContentPage>
