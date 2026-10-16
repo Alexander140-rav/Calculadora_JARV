@@ -1,6 +1,4 @@
-﻿using System.Data;
-
-namespace Calculadora_JARV;
+﻿namespace Calculadora_JARV;
 
 public partial class MainPage : ContentPage
 {
@@ -104,13 +102,13 @@ public partial class MainPage : ContentPage
         {
             TxtHistorial.Text = expresionActual + " =";
 
-            // Reemplazar símbolos visuales por sintaxis matemática estándar
-            string formula = expresionActual.Replace("×", "*").Replace("÷", "/");
+            // Asegurar que comas se conviertan a puntos decimales
+            string formula = expresionActual.Replace(",", ".").Replace("×", "*").Replace("÷", "/");
 
-            // Convertir porcentajes (ej: 50% -> (50/100))
+            // Reemplazar porcentajes (ej. 50% -> (50/100))
             formula = System.Text.RegularExpressions.Regex.Replace(formula, @"(\d+(\.\d+)?)%", "($1/100)");
 
-            // Validar división entre cero explícita
+            // Validar división entre cero
             if (System.Text.RegularExpressions.Regex.IsMatch(formula, @"/\s*0(\.0+)?(?!\d)"))
             {
                 TxtPantalla.Text = "Error: Div / 0";
@@ -118,20 +116,18 @@ public partial class MainPage : ContentPage
                 return;
             }
 
-            var dt = new DataTable();
-            var resultado = dt.Compute(formula, null);
+            double resultado = EvaluadorMatematico.Evaluar(formula);
 
-            double valor = Convert.ToDouble(resultado);
-
-            if (double.IsInfinity(valor) || double.IsNaN(valor))
+            if (double.IsInfinity(resultado) || double.IsNaN(resultado))
             {
                 TxtPantalla.Text = "Error: Div / 0";
                 expresionActual = "";
             }
             else
             {
-                TxtPantalla.Text = valor.ToString("G15");
-                expresionActual = valor.ToString();
+                string resStr = resultado.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                TxtPantalla.Text = resStr;
+                expresionActual = resStr;
             }
         }
         catch
@@ -151,5 +147,79 @@ public partial class MainPage : ContentPage
         char[] delimitadores = { '+', '-', '×', '÷', '%', '(', ')' };
         string[] partes = expr.Split(delimitadores);
         return partes.Length > 0 ? partes[^1] : "";
+    }
+}
+
+// Evaluador matemático propio independiente de la configuración regional
+public static class EvaluadorMatematico
+{
+    public static double Evaluar(string expresion)
+    {
+        int pos = 0;
+
+        double ParsearTermino()
+        {
+            double valor = ParsearFactor();
+            while (pos < expresion.Length)
+            {
+                char op = expresion[pos];
+                if (op != '*' && op != '/') break;
+                pos++;
+                double siguiente = ParsearFactor();
+                if (op == '*') valor *= siguiente;
+                else
+                {
+                    if (siguiente == 0) throw new DivideByZeroException();
+                    valor /= siguiente;
+                }
+            }
+            return valor;
+        }
+
+        double ParsearFactor()
+        {
+            if (pos >= expresion.Length) return 0;
+
+            if (expresion[pos] == '+') { pos++; return ParsearFactor(); }
+            if (expresion[pos] == '-') { pos++; return -ParsearFactor(); }
+
+            if (expresion[pos] == '(')
+            {
+                pos++; // Saltar '('
+                double res = ParsearExpresion();
+                if (pos < expresion.Length && expresion[pos] == ')') pos++; // Saltar ')'
+                return res;
+            }
+
+            int inicio = pos;
+            while (pos < expresion.Length && (char.IsDigit(expresion[pos]) || expresion[pos] == '.'))
+            {
+                pos++;
+            }
+
+            string numStr = expresion.Substring(inicio, pos - inicio);
+            if (double.TryParse(numStr, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double num))
+            {
+                return num;
+            }
+            return 0;
+        }
+
+        double ParsearExpresion()
+        {
+            double valor = ParsearTermino();
+            while (pos < expresion.Length)
+            {
+                char op = expresion[pos];
+                if (op != '+' && op != '-') break;
+                pos++;
+                double siguiente = ParsearTermino();
+                if (op == '+') valor += siguiente;
+                else valor -= siguiente;
+            }
+            return valor;
+        }
+
+        return ParsearExpresion();
     }
 }
